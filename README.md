@@ -42,6 +42,41 @@ jobs:
 4. Customize the behavior of the Emoji Issue Classifier by modifying the Python script (`main.py`) based on your requirements.
 5. Run the Emoji Issue Classifier by executing `python main.py` in the repository directory.
 
+## Test
+
+In order to test the classifier you can:
+
+1. Create a `test.json` file with the following content:
+
+```
+{
+    "issue": {
+      "number": 2
+    }
+}
+```
+
+2. Create a `test.sh` file with the following content:
+```
+#!/bin/bash
+# test.sh
+
+export GITHUB_TOKEN=YOUR_TOKEN
+export GITHUB_REPOSITORY=YOUR_REPOSITORY
+export GITHUB_EVENT_PATH=test/test.json
+python classifier/main.py
+```
+
+3. Ensure that the bash script (test.sh) has the correct permissions to be executed.
+```
+chmod +x test.sh
+```
+
+4. Run run this bash script from the terminal with:
+```
+./test.sh
+```
+
 ## Customization
 
 You can customize the behavior of the Emoji Issue Classifier by modifying the following components:
