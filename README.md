@@ -51,7 +51,7 @@ In order to test the classifier you can:
 ```
 {
     "issue": {
-      "number": 2
+      "number": 1
     }
 }
 ```
