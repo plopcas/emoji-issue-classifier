@@ -35,6 +35,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
+```
 
 3. Configure the necessary environment variables:
    - `GITHUB_TOKEN`: GitHub token with repository access.
