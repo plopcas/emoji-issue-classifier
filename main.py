@@ -1,18 +1,15 @@
-import os
-import json
 import pickle
-from github import Github
 from textblob import TextBlob
+from utils.github_utils import add_label_to_issue, get_github_client, get_github_repo, get_issue_from_event
     
 def load_classifier():
         # Load the trained classifier
-        with open("model.pkl", "rb") as f:
+        with open("train/model.pkl", "rb") as f:
             vectorizer, classifier = pickle.load(f)
         return vectorizer, classifier
 
 # Function to classify an issue using the trained classifier
-def get_predicted_emojis(issue, vectorizer, classifier):
-    issue_text = issue.title + " " + issue.body
+def get_predicted_emojis(issue_text, vectorizer, classifier):
     X_test = vectorizer.transform([issue_text])
     predicted_labels = classifier.predict(X_test)
     return predicted_labels.tolist()
@@ -153,54 +150,33 @@ def get_keyword_emojis(text):
 
 def main():
     # Setup
-    g = Github(os.getenv('GITHUB_TOKEN'))
-    repo = g.get_repo(os.getenv('GITHUB_REPOSITORY'))
+    g = get_github_client()
+    repo = get_github_repo(g);
 
     # Get the issue from the event payload
-    with open(os.getenv('GITHUB_EVENT_PATH')) as f:
-        event = json.load(f)
-    issue_number = event["issue"]["number"]
-    issue = repo.get_issue(number=issue_number)
+    issue = get_issue_from_event(repo)
+    issue_text = issue.title + " " + str(issue.body)
 
     # Perform sentiment analysis
-    blob = TextBlob(issue.title + " " + issue.body)
+    blob = TextBlob(issue_text)
     sentiment = blob.sentiment
 
     # Add sentiment label
     sentiment_emoji = get_sentiment_emoji(sentiment.polarity)
-    sentiment_label = None
-    try:
-        sentiment_label = repo.get_label(sentiment_emoji)
-    except:
-        sentiment_label = repo.create_label(sentiment_emoji, "FFFFFF")
-    issue.add_to_labels(sentiment_label)
-    print(f"Added sentiment label: {sentiment_emoji}")
+    add_label_to_issue(issue, sentiment_emoji)
 
     # Add keyword labels
-    keyword_emojis = get_keyword_emojis(issue.title + " " + issue.body)
+    keyword_emojis = get_keyword_emojis(issue_text)
     for keyword_emoji in keyword_emojis:
-        keyword_label = None
-        try:
-            keyword_label = repo.get_label(keyword_emoji)
-        except:
-            keyword_label = repo.create_label(keyword_emoji, "FFFFFF")
-        issue.add_to_labels(keyword_label)
-        print(f"Added keyword label: {keyword_emoji}") 
- 
+        add_label_to_issue(issue, keyword_emoji)
     
     # Load the trained classifier
     vectorizer, classifier = load_classifier()
 
     # Classify the issue
-    predicted_emojis = get_predicted_emojis(issue, vectorizer, classifier)
+    predicted_emojis = get_predicted_emojis(issue_text, vectorizer, classifier)
     for predicted_emoji in predicted_emojis:
-        predicted_label = None
-        try:
-            predicted_label = repo.get_label(predicted_emoji)
-        except:
-            predicted_label = repo.create_label(predicted_emoji, "FFFFFF")  # you can change the color as needed
-        issue.add_to_labels(predicted_label)
-        print(f"Added predicted label: {predicted_emoji}")  # print the added predicted emoji
+        add_label_to_issue(issue, predicted_emoji)
 
 if __name__ == "__main__":
     main()
