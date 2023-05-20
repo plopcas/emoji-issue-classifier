@@ -1,14 +1,34 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import pickle
+from nltk.corpus import wordnet
 
-# Function to train a classifier
-def train_classifier(X, y):
-    vectorizer = TfidfVectorizer()
-    X_train = vectorizer.fit_transform(X)
-    classifier = LogisticRegression()
-    classifier.fit(X_train, y)
-    return vectorizer, classifier
+# Function to perform synonym replacement
+def synonym_replacement(text):
+    augmented_text = []
+    for word in text.split():
+        synonyms = wordnet.synsets(word)
+        if synonyms:
+            augmented_text.append(synonyms[0].lemmas()[0].name())
+        else:
+            augmented_text.append(word)
+    return ' '.join(augmented_text)
+
+# Function to perform data augmentation
+def augment_data(X, y):
+    augmented_X = []
+    augmented_y = []
+    for i in range(len(X)):
+        augmented_X.append(X[i])
+        augmented_y.append(y[i])
+        
+        augmented_text = synonym_replacement(X[i])
+        augmented_X.append(augmented_text)
+        augmented_y.append(y[i])
+        
+        # Apply other augmentation techniques as needed
+        
+    return augmented_X, augmented_y
 
 # Define your labeled training data
 labeled_data = [
@@ -112,16 +132,26 @@ labeled_data = [
     ("WooCommerce-related issue.", ":shopping_cart:"),
     ("Joomla-related issue.", ":j:"),
     ("Drupal-related issue.", ":d:"),
-    # Add more labeled data...
+    # Add more labeled data relevant to your situation...
 ]
 
 # Extract the features (X) and labels (y) from the labeled data
 X = [data[0] for data in labeled_data]
 y = [data[1] for data in labeled_data]
 
+# Perform data augmentation
+augmented_X, augmented_y = augment_data(X, y)
+
+# Combine original and augmented data
+combined_X = X + augmented_X
+combined_y = y + augmented_y
+
 # Train the classifier
-vectorizer, classifier = train_classifier(X, y)
+vectorizer = TfidfVectorizer()
+X_train = vectorizer.fit_transform(combined_X)
+classifier = LogisticRegression()
+classifier.fit(X_train, combined_y)
 
 # Save the trained classifier and vectorizer to a file
-with open("model.pkl", "wb") as f:
+with open("training/model.pkl", "wb") as f:
     pickle.dump((vectorizer, classifier), f)

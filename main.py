@@ -4,7 +4,7 @@ from utils.github_utils import add_label_to_issue, get_github_client, get_github
     
 def load_classifier():
         # Load the trained classifier
-        with open("train/model.pkl", "rb") as f:
+        with open("training/model.pkl", "rb") as f:
             vectorizer, classifier = pickle.load(f)
         return vectorizer, classifier
 
