@@ -47,10 +47,10 @@ jobs:
 
 You can customize the behavior of the Emoji Issue Classifier by modifying the following components:
 
-- **Sentiment Analysis**: Adjust the sentiment thresholds and corresponding emojis in the `get_sentiment_emoji` function.
-- **Keyword Matching**: Add or modify keywords and corresponding emojis in the `get_keyword_emoji` function.
-- **Trained Model**: Train and save a new model using the provided `train_classifier` function and replace the `model.pkl` file.
-- **Label Color**: Change the label color in the `add_label_to_issue` function by modifying the hex color code.
+- **Sentiment Analysis**: adjust the sentiment thresholds and corresponding emojis in the `get_sentiment_emoji` function.
+- **Keyword Matching**: add or modify keywords and corresponding emojis in the `get_keyword_emoji` function.
+- **Trained Model**: train and save a new model using the provided `train` script and replace the `model.pkl` file.
+- **Label Color**: change the label color in the `add_label_to_issue` function by modifying the hex color code.
 
 ## Contributing
 
