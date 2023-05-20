@@ -2,7 +2,7 @@ name: 'Emoji Issue Classifier'
 description: 'Automatically classifies GitHub issues and labels them with emojis'
 author: 'Pedro Lopez'
 branding:
-  icon: 'dependabot'
+  icon: 'activity'
   color: 'blue'
 inputs:
   GITHUB_TOKEN:
