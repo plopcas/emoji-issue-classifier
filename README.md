@@ -39,7 +39,6 @@ jobs:
 
 3. Configure the necessary environment variables:
    - `GITHUB_TOKEN`: GitHub token with repository access.
-   - (Optional) Other environment variables used in your script.
 4. Customize the behavior of the Emoji Issue Classifier by modifying the Python script (`main.py`) based on your requirements.
 5. Run the Emoji Issue Classifier by executing `python main.py` in the repository directory.
 
