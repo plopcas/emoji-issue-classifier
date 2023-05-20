@@ -1,4 +1,0 @@
-PyGithub
-textblob
-scikit-learn
-nltk
