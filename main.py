@@ -1,7 +1,21 @@
 import os
 import json
+import pickle
 from github import Github
 from textblob import TextBlob
+    
+def load_classifier():
+        # Load the trained classifier
+        with open("model.pkl", "rb") as f:
+            vectorizer, classifier = pickle.load(f)
+        return vectorizer, classifier
+
+# Function to classify an issue using the trained classifier
+def get_predicted_emojis(issue, vectorizer, classifier):
+    issue_text = issue.title + " " + issue.body
+    X_test = vectorizer.transform([issue_text])
+    predicted_labels = classifier.predict(X_test)
+    return predicted_labels.tolist()
 
 def get_sentiment_emoji(sentiment_polarity):
     if sentiment_polarity > 0.5:
@@ -15,7 +29,7 @@ def get_sentiment_emoji(sentiment_polarity):
     else:
         return ":angry_face:"
 
-def get_keyword_emoji(text):
+def get_keyword_emojis(text):
     keywords = {
         "bug": ":bug:",
         "error": ":warning:",
@@ -47,12 +61,12 @@ def get_keyword_emoji(text):
         "backend": ":gear:",
         "frontend": ":computer:",
         "design": ":art:",
-        "typo": ":pencil:",
-        "config": ":wrench:",
+        "typo": ":pencil2:",
+        "config": ":gear:",
         "api": ":link:",
         "mobile": ":iphone:",
         "web": ":globe_with_meridians:",
-        "build": ":building_construction:",
+        "build": ":hammer:",
         "release": ":rocket:",
         "deploy": ":ship:",
         "success": ":heavy_check_mark:",
@@ -70,7 +84,7 @@ def get_keyword_emoji(text):
         "client": ":computer:",
         "network": ":globe_with_meridians:",
         "linux": ":penguin:",
-        "windows": ":desktop_computer:",
+        "windows": ":computer:",
         "mac": ":computer:",
         "ios": ":iphone:",
         "android": ":robot:",
@@ -95,19 +109,19 @@ def get_keyword_emoji(text):
         "csharp": ":desktop_computer:",
         "swift": ":swift:",
         "kotlin": ":kotlin:",
-        "flutter": ":flutter:",
+        "flutter": ":rocket:",
         "docker": ":whale:",
-        "aws": ":aws:",
-        "azure": ":azure:",
-        "gcp": ":gcp:",
-        "graphql": ":graphql:",
+        "aws": ":cloud:",
+        "azure": ":cloud:",
+        "gcp": ":cloud:",
+        "graphql": ":trident:",
         "rest": ":zzz:",
         "oauth": ":key:",
         "redux": ":recycle:",
         "vuex": ":recycle:",
         "angular": ":a:",
-        "react": ":atom_symbol:",
-        "vue": ":herb:",
+        "react": ":atom:",
+        "vue": ":leaves:",
         "svelte": ":mag:",
         "django": ":spider_web:",
         "flask": ":wine_glass:",
@@ -127,14 +141,15 @@ def get_keyword_emoji(text):
         "woocommerce": ":shopping_cart:",
         "joomla": ":j:",
         "drupal": ":d:",
-         # add more keywords and corresponding emojis as needed
+        # add more keywords and corresponding emojis as needed
     }
     
+    emojis = []
     for keyword, emoji in keywords.items():
         if keyword in text.lower():
-            return emoji
+            emojis.append(emoji)
 
-    return None  # return None if no keyword matches
+    return emojis
 
 def main():
     # Setup
@@ -157,20 +172,35 @@ def main():
     try:
         sentiment_label = repo.get_label(sentiment_emoji)
     except:
-        sentiment_label = repo.create_label(sentiment_emoji, "FFFFFF")  # you can change the color as needed
+        sentiment_label = repo.create_label(sentiment_emoji, "FFFFFF")
     issue.add_to_labels(sentiment_label)
-    print(f"Added sentiment label: {sentiment_emoji}")  # print the added sentiment emoji
+    print(f"Added sentiment label: {sentiment_emoji}")
 
     # Add keyword labels
-    keyword_emoji = get_keyword_emoji(issue.title + " " + issue.body)
-    if keyword_emoji:
+    keyword_emojis = get_keyword_emojis(issue.title + " " + issue.body)
+    for keyword_emoji in keyword_emojis:
         keyword_label = None
         try:
             keyword_label = repo.get_label(keyword_emoji)
         except:
-            keyword_label = repo.create_label(keyword_emoji, "FFFFFF")  # you can change the color as needed
+            keyword_label = repo.create_label(keyword_emoji, "FFFFFF")
         issue.add_to_labels(keyword_label)
-        print(f"Added keyword label: {keyword_emoji}")  # print the added keyword emoji
+        print(f"Added keyword label: {keyword_emoji}") 
+ 
+    
+    # Load the trained classifier
+    vectorizer, classifier = load_classifier()
+
+    # Classify the issue
+    predicted_emojis = get_predicted_emojis(issue, vectorizer, classifier)
+    for predicted_emoji in predicted_emojis:
+        predicted_label = None
+        try:
+            predicted_label = repo.get_label(predicted_emoji)
+        except:
+            predicted_label = repo.create_label(predicted_emoji, "FFFFFF")  # you can change the color as needed
+        issue.add_to_labels(predicted_label)
+        print(f"Added predicted label: {predicted_emoji}")  # print the added predicted emoji
 
 if __name__ == "__main__":
     main()
