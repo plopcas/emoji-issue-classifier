@@ -18,9 +18,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip3 install --upgrade pip
-        pip3 install -r requirements.txt
+        pip3 install -r classifier/requirements.txt
 
     - name: Run script
-      run: python main.py
+      run: python classifier/main.py
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
