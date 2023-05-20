@@ -1,12 +1,20 @@
 import pickle
+import os
 from textblob import TextBlob
 from utils.github_utils import add_label_to_issue, get_github_client, get_github_repo, get_issue_from_event
-    
+
 def load_classifier():
-        # Load the trained classifier
-        with open("model.pkl", "rb") as f:
-            vectorizer, classifier = pickle.load(f)
-        return vectorizer, classifier
+    # Define the directory of the current script
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    
+    # Define the path of the model file
+    model_path = os.path.join(dir_path, 'model.pkl')
+
+    # Load the trained classifier
+    with open(model_path, "rb") as f:
+        vectorizer, classifier = pickle.load(f)
+    
+    return vectorizer, classifier
 
 # Function to classify an issue using the trained classifier
 def get_predicted_emojis(issue_text, vectorizer, classifier):
@@ -81,64 +89,28 @@ def get_keyword_emojis(text):
         "client": ":computer:",
         "network": ":globe_with_meridians:",
         "linux": ":penguin:",
-        "windows": ":computer:",
-        "mac": ":computer:",
+        "windows": ":desktop_computer:",
+        "mac": ":apple:",
         "ios": ":iphone:",
         "android": ":robot:",
-        "javascript": ":javascript:",
+        "javascript": ":yellow_heart:",
         "python": ":snake:",
         "ruby": ":gem:",
         "java": ":coffee:",
         "php": ":elephant:",
-        "html": ":html5:",
-        "css": ":css3:",
+        "html": ":page_facing_up:",
+        "css": ":art:",
         "sass": ":eyeglasses:",
-        "less": ":minus:",
+        "less": ":arrow_down_small:",
         "json": ":memo:",
-        "xml": ":page_with_curl:",
-        "markdown": ":pencil2:",
-        "typescript": ":typescript:",
-        "go": ":gopher:",
-        "rust": ":rust:",
-        "shell": ":shell:",
-        "c": ":desktop_computer:",
-        "cplusplus": ":desktop_computer:",
-        "csharp": ":desktop_computer:",
-        "swift": ":swift:",
-        "kotlin": ":kotlin:",
-        "flutter": ":rocket:",
+        "xml": ":book:",
+        "markdown": ":memo:",
         "docker": ":whale:",
         "aws": ":cloud:",
         "azure": ":cloud:",
         "gcp": ":cloud:",
-        "graphql": ":trident:",
-        "rest": ":zzz:",
-        "oauth": ":key:",
-        "redux": ":recycle:",
-        "vuex": ":recycle:",
-        "angular": ":a:",
-        "react": ":atom:",
-        "vue": ":leaves:",
-        "svelte": ":mag:",
-        "django": ":spider_web:",
-        "flask": ":wine_glass:",
         "rails": ":train:",
-        "laravel": ":framed_picture:",
-        "spring": ":cherry_blossom:",
-        "node": ":leaves:",
-        "express": ":train2:",
-        "nestjs": ":bird:",
-        "mongodb": ":leaves:",
-        "mysql": ":dolphin:",
-        "postgres": ":elephant:",
-        "sqlite": ":file_folder:",
-        "redis": ":fire:",
-        "wordpress": ":capital_abcd:",
-        "shopify": ":shopping_cart:",
-        "woocommerce": ":shopping_cart:",
-        "joomla": ":j:",
-        "drupal": ":d:",
-        # add more keywords and corresponding emojis as needed
+        # Add more keywords and corresponding emojis as needed
     }
     
     emojis = []

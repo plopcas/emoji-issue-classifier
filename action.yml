@@ -1,0 +1,9 @@
+name: 'Emoji Issue Classifier'
+description: 'Automatically classifies GitHub issues and labels them with emojis'
+author: 'Pedro Lopez'
+branding:
+  icon: 'activity'
+  color: 'blue'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

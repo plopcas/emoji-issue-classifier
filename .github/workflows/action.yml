@@ -6,6 +6,9 @@ on:
 jobs:
   emoji-label:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -17,10 +20,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip3 install --upgrade pip
-        pip3 install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install -r classifier/requirements.txt
 
     - name: Run script
-      run: python main.py
+      run: python classifier/main.py
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -9,38 +9,63 @@ The Emoji Issue Classifier is a GitHub Action that automatically classifies issu
 2. Add the following workflow configuration to the file:
 
 ```yaml
-name: Emoji Issue Classifier
+# .github/workflows/issue-classifier.yml
+name: 'Use Emoji Issue Classifier Action'
+
 on:
   issues:
-    types:
-      - opened
-      - edited
+    types: [opened, edited]
 
 jobs:
-  classify-issue:
+  classify:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-
-      - name: Install dependencies
-        run: pip3 install -r requirements.txt
-
-      - name: Run Emoji Issue Classifier
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python main.py
+    - name: Use Emoji Classifier
+      uses: plopcas/emoji-issue-classifier@v1.0.19
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
 ```
 
 3. Configure the necessary environment variables:
    - `GITHUB_TOKEN`: GitHub token with repository access.
 4. Customize the behavior of the Emoji Issue Classifier by modifying the Python script (`main.py`) based on your requirements.
 5. Run the Emoji Issue Classifier by executing `python main.py` in the repository directory.
+
+## Test
+
+In order to test the classifier you can:
+
+1. Create a `test.json` file with the following content:
+
+```
+{
+    "issue": {
+      "number": 1
+    }
+}
+```
+
+2. Create a `test.sh` file with the following content:
+```
+#!/bin/bash
+# test.sh
+
+export GITHUB_TOKEN=YOUR_TOKEN
+export GITHUB_REPOSITORY=YOUR_REPOSITORY
+export GITHUB_EVENT_PATH=test/test.json
+python classifier/main.py
+```
+
+3. Ensure that the bash script (test.sh) has the correct permissions to be executed.
+```
+chmod +x test.sh
+```
+
+4. Run run this bash script from the terminal with:
+```
+./test.sh
+```
 
 ## Customization
 

@@ -21,3 +21,4 @@ def add_label_to_issue(issue, label):
         existing_label = issue.repository.create_label(label, "FFFFFF")
     issue.add_to_labels(existing_label)
     print(f"Added label: {label}")
+    
