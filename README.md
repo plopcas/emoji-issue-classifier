@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - name: Use Emoji Classifier
-      uses: plopcas/emoji-issue-classifier@v1.0.19
+      uses: plopcas/emoji-issue-classifier@v1.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
 ```
